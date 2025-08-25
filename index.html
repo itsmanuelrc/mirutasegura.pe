@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ruta Segura - Tranquilidad en el camino al colegio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Logo */
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border: 3px solid white;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(44,90,160,0.1);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2c5aa0;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.15;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            color: white;
+            padding: 1.1rem 2.2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: -10%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 500px;
+            height: 500px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: linear-gradient(to bottom, #f8f9fa, white);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: #5a6c7d;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(44,90,160,0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        .feature-card p {
+            color: #5a6c7d;
+            line-height: 1.6;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 6rem 0;
+            background: white;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        .step p {
+            color: #5a6c7d;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .faq-item h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .faq-item p {
+            color: #5a6c7d;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Testimonial */
+        .testimonial {
+            background: linear-gradient(135deg, #2c5aa0, #1e3c72);
+            padding: 4rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .testimonial blockquote {
+            font-size: 1.4rem;
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .testimonial cite {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .final-cta h2 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .final-cta p {
+            font-size: 1.15rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1rem 1.8rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        .download-btn.coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .hero-visual {
+                display: none;
+            }
+            
+            .features-grid,
+            .steps-grid,
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Scroll animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                Mi Ruta Segura
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#como-funciona">¿Cómo funciona?</a></li>
+                <li><a href="#usuarios">Usuarios</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content fade-in-up">
+                <h1>El camino al colegio de tu hijo: ¿aventura o pesadilla?</h1>
+                <p>Imagínate despertar cada día sabiendo que tu comunidad entera protege a tu hijo. Comerciantes, vecinos, otros padres... todos conectados para que llegue seguro y feliz.</p>
+                <a href="#descarga" class="cta-button">
+                    📱 Descargar Gratis
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            🏫
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="usuarios">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">3 maneras de usar Mi Ruta Segura</h2>
+            <p class="section-subtitle animate-on-scroll">Tu comunidad ya cuida a tu hijo, ahora también te avisa. Cada persona tiene un papel importante en crear rutas más seguras.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Como Padre de Familia</h3>
+                    <p><strong>Duerme tranquilo sabiendo que no estás solo cuidando a tu hijo.</strong> Recibe alertas de incidentes en tiempo real, conoce rutas alternativas seguras y conecta con otros padres de tu zona para actuar juntos ante cualquier situación.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">👥</div>
+                    <h3>Como Aliado de la Comunidad</h3>
+                    <p><strong>Sé los ojos y oídos que otros padres necesitan en tu barrio.</strong> Comerciantes, vecinos y ciudadanos comprometidos pueden reportar situaciones de riesgo y ayudar a crear una red de protección efectiva.</p>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">🎒</div>
+                    <h3>Como Estudiante</h3>
+                    <p><strong>Convierte tu camino al colegio en la mejor parte del día.</strong> Conoce las rutas más seguras, recibe consejos de otros estudiantes y camina con confianza sabiendo que toda tu comunidad te respalda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">¿Cómo transformamos el miedo en tranquilidad?</h2>
+            <p class="section-subtitle animate-on-scroll">En 3 pasos simples, toda tu comunidad trabaja junta</p>
+            
+            <div class="steps-grid">
+                <div class="step animate-on-scroll">
+                    <div class="step-number">1</div>
+                    <h3>Descarga y Regístrate</h3>
+                    <p>Descarga Mi Ruta Segura gratis, registra los datos de tu hijo y su colegio. En menos de 2 minutos estarás conectado con tu comunidad local.</p>
+                </div>
+                
+                <div class="step animate-on-scroll">
+                    <div class="step-number">2</div>
+                    <h3>Recibe Alertas Inteligentes</h3>
+                    <p>Cada mañana, antes de que tu hijo salga, recibirás información sobre incidentes, manifestaciones o situaciones de riesgo en su ruta habitual.</p>
+                </div>
+                
+                <div class="step animate-on-scroll">
+                    <div class="step-number">3</div>
+                    <h3>Actúa y Protege</h3>
+                    <p>Con información en tiempo real, podrás orientar a tu hijo sobre rutas alternativas, horarios seguros y precauciones específicas. ¡Nunca más irá a ciegas!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="testimonial">
+        <div class="container">
+            <blockquote>
+                "Antes mi hija iba nerviosa al colegio. Ahora sonríe porque sabe que toda la comunidad la cuida. Como padre, finalmente tengo la tranquilidad que tanto necesitaba."
+            </blockquote>
+            <cite>— Padre de familia, usuario de Mi Ruta Segura</cite>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">Preguntas Frecuentes</h2>
+            
+            <div class="faq-grid">
+                <div class="faq-item animate-on-scroll">
+                    <h4>¿La app es realmente gratuita?</h4>
+                    <p>Sí, Mi Ruta Segura es completamente gratuita para padres de familia en colegios afiliados. Estamos probando actualmente en algunos colegios de Lima y expandiendo gradualmente.</p>
+                </div>
+                
+                <div class="faq-item animate-on-scroll">
+                    <h4>¿Cómo se verifican los reportes?</h4>
+                    <p>Tenemos un sistema de verificación comunitaria donde múltiples fuentes confirman los incidentes. Además, trabajamos con autoridades locales para validar información crítica.</p>
+                </div>
+                
+                <div class="faq-item animate-on-scroll">
+                    <h4>¿Qué pasa con la privacidad de mi hijo?</h4>
+                    <p>La privacidad es nuestra prioridad. No compartimos información personal de los estudiantes. Solo usamos datos agregados y anónimos para generar alertas de seguridad.</p>
+                </div>
+                
+                <div class="faq-item animate-on-scroll">
+                    <h4>¿Mi colegio está incluido?</h4>
+                    <p>Estamos probando en colegios selectos de Lima. Si tu colegio aún no está afiliado, regístrate en nuestra lista de espera y serás el primero en saberlo cuando lleguemos a tu zona.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="descarga">
+        <div class="container">
+            <h2>Únete a la red de padres que protegen juntos</h2>
+            <p>Porque el camino al colegio debe ser una aventura, no una preocupación</p>
+            
+            <div class="download-buttons">
+                <a href="#" class="download-btn">
+                    📱 Descargar en Google Play
+                </a>
+                <a href="#" class="download-btn coming-soon">
+                    🍎 iOS Próximamente
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255,255,255,0.98)';
+            } else {
+                nav.style.background = 'rgba(255,255,255,0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
