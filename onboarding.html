@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ruta Segura - Bienvenido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .phone-container {
+            max-width: 375px;
+            margin: 0 auto;
+            height: 100vh;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 32px rgba(0,0,0,0.12);
+        }
+
+        /* Status bar - Android style */
+        .status-bar {
+            height: 28px;
+            background: #1976D2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            height: calc(100vh - 28px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 24px 24px;
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            color: white;
+            position: relative;
+        }
+
+        .welcome-content {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .app-logo {
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+
+        .app-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .app-subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.5;
+            margin-bottom: 48px;
+        }
+
+        .welcome-actions {
+            gap: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #1976D2;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 16px 32px;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #1976D2;
+        }
+
+        /* User Type Selection */
+        .user-type-screen {
+            height: calc(100vh - 28px);
+            display: none;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            height: 56px;
+            background: #1976D2;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 16px;
+        }
+
+        .toolbar-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .screen-content {
+            flex: 1;
+            padding: 32px 24px 24px;
+            background: white;
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .screen-subtitle {
+            font-size: 16px;
+            color: #757575;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .user-type-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .user-type-card {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-type-card:hover {
+            border-color: #1976D2;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+        }
+
+        .user-type-card.selected {
+            border-color: #1976D2;
+            background: #E3F2FD;
+        }
+
+        .user-type-icon {
+            width: 48px;
+            height: 48px;
+            background: #F5F5F5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .user-type-card.selected .user-type-icon {
+            background: #1976D2;
+            color: white;
+        }
+
+        .user-type-info {
+            flex: 1;
+        }
+
+        .user-type-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .user-type-description {
+            font-size: 14px;
+            color: #757575;
+            line-height: 1.3;
+        }
+
+        .continue-btn {
+            background: #1976D2;
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .continue-btn.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-btn:hover.enabled {
+            background: #1565C0;
+        }
+
+        /* Form Screens */
+        .form-screen {
+            height: calc(100vh - 28px);
+            display: none;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+        }
+
+        .location-picker {
+            background: #F8F9FA;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .location-picker:hover {
+            border-color: #1976D2;
+            background: #F0F8FF;
+        }
+
+        .location-icon {
+            width: 48px;
+            height: 48px;
+            background: #1976D2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .location-text {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .permission-info {
+            background: #E3F2FD;
+            border: 1px solid #BBDEFB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .permission-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1976D2;
+            margin-bottom: 4px;
+        }
+
+        .permission-text {
+            font-size: 12px;
+            color: #1565C0;
+            line-height: 1.4;
+        }
+
+        .success-screen {
+            height: calc(100vh - 28px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 48px 24px;
+            background: white;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            margin-bottom: 24px;
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 16px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: #757575;
+            line-height: 1.5;
+            margin-bottom: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>●</span>
+                <span>●●●</span>
+                <span>WiFi</span>
+            </div>
+            <div class="status-right">
+                <span>9:30</span>
+                <span>●●●●</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-content">
+                <div class="app-logo">
+                    <img src="img/imagotipo.svg" width="160" alt="">
+                </div>
+                <h1 class="app-title">
+                    
+                </h1>
+                <p class="app-subtitle">Conectamos padres, estudiantes y autoridades para trayectos escolares más seguros</p>
+            </div>
+            <div class="welcome-actions">
+                <button class="btn-primary" onclick="startOnboarding()">Comenzar</button>
+                <button class="btn-secondary" onclick="showLogin()">Ya tengo cuenta</button>
+            </div>
+        </div>
+
+        <!-- User Type Selection -->
+        <div class="user-type-screen" id="userTypeScreen">
+            <div class="toolbar">
+                <svg class="back-btn" onclick="goBack()" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <span class="toolbar-title">Registro</span>
+            </div>
+            
+            <div class="screen-content">
+                <h2 class="screen-title">¿Quién eres?</h2>
+                <p class="screen-subtitle">Selecciona tu perfil para personalizar tu experiencia</p>
+                
+                <div class="user-type-options">
+                    <div class="user-type-card" onclick="selectUserType('parent')">
+                        <div class="user-type-icon">👨‍👩‍👧‍👦</div>
+                        <div class="user-type-info">
+                            <div class="user-type-title">Padre de familia</div>
+                            <div class="user-type-description">Consulta reportes y mantente informado sobre la ruta de tus hijos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type-card" onclick="selectUserType('ally')">
+                        <div class="user-type-icon">🤝</div>
+                        <div class="user-type-info">
+                            <div class="user-type-title">Aliado</div>
+                            <div class="user-type-description">Vecino, autoridad o miembro de la comunidad que quiere ayudar</div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-type-card" onclick="selectUserType('student')">
+                        <div class="user-type-icon">🎒</div>
+                        <div class="user-type-info">
+                            <div class="user-type-title">Estudiante</div>
+                            <div class="user-type-description">Consulta información sobre incidentes en tu ruta al colegio</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="continue-btn" id="continueBtn" onclick="proceedToForm()">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Parent Form -->
+        <div class="form-screen" id="parentForm">
+            <div class="toolbar">
+                <svg class="back-btn" onclick="goBack()" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <span class="toolbar-title">Datos del padre</span>
+            </div>
+            
+            <div class="screen-content">
+                <h2 class="screen-title">Información básica</h2>
+                <p class="screen-subtitle">Necesitamos algunos datos para personalizar tu experiencia</p>
+                
+                <div class="permission-info">
+                    <div class="permission-title">🔒 Información segura</div>
+                    <div class="permission-text">Tus datos están protegidos y solo se usan para mejorar la seguridad de la comunidad escolar</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" class="form-input" placeholder="Ej: María García López" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Colegio de tu hijo/a</label>
+                    <select class="form-select" required>
+                        <option value="">Selecciona el colegio</option>
+                        <option value="san-martin">I.E. San Martín de Porres</option>
+                        <option value="garcia-moreno">Colegio García Moreno</option>
+                        <option value="mercedes">Nuestra Señora de las Mercedes</option>
+                        <option value="salesiano">Colegio Salesiano</option>
+                        <option value="otro">Otro colegio</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Ubicación del colegio</label>
+                    <div class="location-picker" onclick="pickLocation()">
+                        <div class="location-icon">📍</div>
+                        <div class="location-text">Toca para marcar en el mapa</div>
+                    </div>
+                </div>
+                
+                <button class="continue-btn enabled" onclick="completeRegistration()">Completar registro</button>
+            </div>
+        </div>
+
+        <!-- Ally Form -->
+        <div class="form-screen" id="allyForm">
+            <div class="toolbar">
+                <svg class="back-btn" onclick="goBack()" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <span class="toolbar-title">Datos del aliado</span>
+            </div>
+            
+            <div class="screen-content">
+                <h2 class="screen-title">Información de verificación</h2>
+                <p class="screen-subtitle">Para mantener la seguridad de la comunidad, necesitamos verificar tu identidad</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" class="form-input" placeholder="Tu nombre completo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">DNI</label>
+                    <input type="text" class="form-input" placeholder="12345678" maxlength="8" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">¿Quién te recomendó la app?</label>
+                    <select class="form-select" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="parent">Un padre de familia</option>
+                        <option value="school">Personal del colegio</option>
+                        <option value="authority">Autoridad local</option>
+                        <option value="social">Redes sociales</option>
+                        <option value="other">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Zona donde vives o trabajas</label>
+                    <input type="text" class="form-input" placeholder="Ej: Lima Centro, San Isidro" required>
+                </div>
+                
+                <button class="continue-btn enabled" onclick="completeRegistration()">Completar registro</button>
+            </div>
+        </div>
+
+        <!-- Student Form -->
+        <div class="form-screen" id="studentForm">
+            <div class="toolbar">
+                <svg class="back-btn" onclick="goBack()" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                </svg>
+                <span class="toolbar-title">Datos del estudiante</span>
+            </div>
+            
+            <div class="screen-content">
+                <h2 class="screen-title">Tu información</h2>
+                <p class="screen-subtitle">Solo necesitamos algunos datos básicos para empezar</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Tu nombre</label>
+                    <input type="text" class="form-input" placeholder="Ej: Carlos" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tu colegio</label>
+                    <select class="form-select" required>
+                        <option value="">Selecciona tu colegio</option>
+                        <option value="san-martin">I.E. San Martín de Porres</option>
+                        <option value="garcia-moreno">Colegio García Moreno</option>
+                        <option value="mercedes">Nuestra Señora de las Mercedes</option>
+                        <option value="salesiano">Colegio Salesiano</option>
+                        <option value="otro">Otro colegio</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Grado</label>
+                    <select class="form-select" required>
+                        <option value="">Selecciona tu grado</option>
+                        <option value="1-primaria">1° Primaria</option>
+                        <option value="2-primaria">2° Primaria</option>
+                        <option value="3-primaria">3° Primaria</option>
+                        <option value="4-primaria">4° Primaria</option>
+                        <option value="5-primaria">5° Primaria</option>
+                        <option value="6-primaria">6° Primaria</option>
+                        <option value="1-secundaria">1° Secundaria</option>
+                        <option value="2-secundaria">2° Secundaria</option>
+                        <option value="3-secundaria">3° Secundaria</option>
+                        <option value="4-secundaria">4° Secundaria</option>
+                        <option value="5-secundaria">5° Secundaria</option>
+                    </select>
+                </div>
+                
+                <button class="continue-btn enabled" onclick="completeRegistration()">Completar registro</button>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">¡Registro completado!</h2>
+            <p class="success-text">Bienvenido a Mi Ruta Segura. Ya puedes empezar a usar la aplicación para mantenerte informado sobre la seguridad en tu ruta escolar.</p>
+            <button class="btn-primary" onclick="goToApp()" style="width: 100%;">Empezar a usar la app</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 'welcome';
+        let selectedUserType = null;
+        let currentStep = 0;
+
+        const screens = {
+            welcome: document.getElementById('welcomeScreen'),
+            userType: document.getElementById('userTypeScreen'),
+            parentForm: document.getElementById('parentForm'),
+            allyForm: document.getElementById('allyForm'),
+            studentForm: document.getElementById('studentForm'),
+            success: document.getElementById('successScreen')
+        };
+
+        function startOnboarding() {
+            showScreen('userType');
+        }
+
+        function showLogin() {
+            alert('Funcionalidad de inicio de sesión próximamente disponible');
+        }
+
+        function selectUserType(type) {
+            // Remove previous selection
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Select current type
+            event.target.closest('.user-type-card').classList.add('selected');
+            selectedUserType = type;
+            
+            // Enable continue button
+            document.getElementById('continueBtn').classList.add('enabled');
+        }
+
+        function proceedToForm() {
+            if (!selectedUserType) return;
+            
+            const formScreens = {
+                parent: 'parentForm',
+                ally: 'allyForm',
+                student: 'studentForm'
+            };
+            
+            showScreen(formScreens[selectedUserType]);
+        }
+
+        function pickLocation() {
+            alert('Funcionalidad de selección de ubicación en el mapa próximamente disponible');
+        }
+
+        function completeRegistration() {
+            // Simulate registration process
+            showScreen('success');
+            
+            // Auto-redirect after 3 seconds
+            setTimeout(() => {
+                goToApp();
+            }, 3000);
+        }
+
+        function goToApp() {
+            // Here you would navigate to the main app
+            window.location.href = './flujo-reportar.html';
+        }
+
+        function showScreen(screenName) {
+            // Hide all screens
+            Object.values(screens).forEach(screen => {
+                screen.style.display = 'none';
+            });
+            
+            // Show requested screen
+            screens[screenName].style.display = 'flex';
+            currentScreen = screenName;
+        }
+
+        function goBack() {
+            const navigation = {
+                userType: 'welcome',
+                parentForm: 'userType',
+                allyForm: 'userType',
+                studentForm: 'userType'
+            };
+            
+            if (navigation[currentScreen]) {
+                showScreen(navigation[currentScreen]);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showScreen('welcome');
+        });
+    </script>
+</body>
+</html>

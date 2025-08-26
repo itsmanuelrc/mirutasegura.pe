@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ruta Segura - Incidente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .phone-container {
+            max-width: 375px;
+            margin: 0 auto;
+            height: 100vh;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 32px rgba(0,0,0,0.12);
+        }
+
+        /* Status bar - Android style */
+        .status-bar {
+            height: 28px;
+            background: #1976D2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Material Design App Bar */
+        .app-bar {
+            height: 64px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            z-index: 1000;
+            position: relative;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 16px;
+        }
+
+        .app-title-section {
+            flex: 1;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #212121;
+            line-height: 1.2;
+        }
+
+        .app-subtitle {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 2px;
+        }
+
+        .share-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: #424242;
+        }
+
+        /* Notification badge */
+        .notification-entry {
+            background: #FF5722;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInFromTop 0.3s ease-out;
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            height: calc(100vh - 92px - 48px);
+            overflow-y: auto;
+            background: white;
+        }
+
+        /* Incident Header */
+        .incident-header {
+            background: white;
+            padding: 24px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .incident-main-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .incident-avatar {
+            width: 56px;
+            height: 56px;
+            background: #F44336;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .incident-info {
+            flex: 1;
+        }
+
+        .incident-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 6px;
+        }
+
+        .incident-severity {
+            font-size: 14px;
+            color: #F44336;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .incident-time {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .incident-location {
+            background: #F8F9FA;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .location-icon {
+            width: 20px;
+            height: 20px;
+            color: #1976D2;
+        }
+
+        .location-text {
+            font-size: 14px;
+            color: #424242;
+            font-weight: 500;
+        }
+
+        /* Map Preview */
+        .map-preview {
+            height: 180px;
+            background: #f5f5f5;
+            position: relative;
+            margin: 0 16px 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #E0E0E0;
+        }
+
+        .map-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 48%, #e0e0e0 48%, #e0e0e0 50%, transparent 50%),
+                linear-gradient(0deg, transparent 48%, #e0e0e0 48%, #e0e0e0 50%, transparent 50%),
+                radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 80% 20%, rgba(33, 150, 243, 0.1) 0%, transparent 20%);
+            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+        }
+
+        .incident-pin {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            width: 36px;
+            height: 36px;
+        }
+
+        .pin-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.16);
+            background: #F44336;
+            position: relative;
+        }
+
+        .pin-content::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .pin-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            font-size: 14px;
+            z-index: 1;
+        }
+
+        .map-overlay-text {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #424242;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 24px;
+            padding: 0 16px;
+        }
+
+        .section-title {
+            color: #212121;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Details Card */
+        .details-card {
+            background: #F8F9FA;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #757575;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .detail-value {
+            color: #212121;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        /* Description */
+        .incident-description {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 16px;
+            color: #424242;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        /* Alternatives Section */
+        .alternatives-section {
+            background: #E3F2FD;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .alternatives-title {
+            color: #1976D2;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .route-suggestion {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .route-suggestion:hover {
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            transform: translateY(-1px);
+        }
+
+        .route-suggestion:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-info {
+            flex: 1;
+        }
+
+        .route-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .route-details {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .route-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1976D2;
+        }
+
+        /* Community Comments */
+        .community-comment {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: #E0E0E0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #757575;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .comment-body {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-author {
+            font-size: 14px;
+            color: #1976D2;
+            font-weight: 500;
+        }
+
+        .verified-badge {
+            font-size: 12px;
+            color: #4CAF50;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #424242;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        /* Comment Input */
+        .comment-input-section {
+            margin-top: 16px;
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 12px;
+        }
+
+        .comment-input-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border-radius: 24px;
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #424242;
+            outline: none;
+            padding: 8px 0;
+        }
+
+        .comment-input::placeholder {
+            color: #9E9E9E;
+        }
+
+        .comment-send-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #1976D2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.3;
+        }
+
+        .comment-send-btn:not(:disabled) {
+            opacity: 1;
+        }
+
+        .comment-send-btn:not(:disabled):hover {
+            background: #1565C0;
+            transform: scale(1.05);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 16px;
+            border-top: 1px solid #E0E0E0;
+            background: white;
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary {
+            background: #F5F5F5;
+            color: #424242;
+        }
+
+        .btn-secondary:hover {
+            background: #E0E0E0;
+        }
+
+        .btn-primary {
+            background: #1976D2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565C0;
+        }
+
+        /* Success message */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>●</span>
+                <span>●●●</span>
+                <span>WiFi</span>
+            </div>
+            <div class="status-right">
+                <span>06:05</span>
+                <span>●●●●</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <!-- Notification Entry Indicator -->
+        <div class="notification-entry">
+            <div class="notification-icon">⚠️</div>
+            <div class="notification-text">Protesta de impacto medio reportada</div>
+        </div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <svg class="back-btn" onclick="goBack()" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+            </svg>
+            <div class="app-title-section">
+                <div class="app-title">Centro de Lima</div>
+                <div class="app-subtitle">Detalles del incidente</div>
+            </div>
+            <svg class="share-btn" onclick="shareIncident()" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z"/>
+            </svg>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Incident Header -->
+            <div class="incident-header">
+                <div class="incident-main-info">
+                    <div class="incident-avatar">⚠️</div>
+                    <div class="incident-info">
+                        <div class="incident-title">Protestas</div>
+                        <div class="incident-severity">Impacto: Medio</div>
+                        <div class="incident-time">Hoy, 06:05 AM</div>
+                    </div>
+                </div>
+                
+                <div class="incident-location">
+                    <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                    <span class="location-text">Jr. Lampa 111, Centro de Lima</span>
+                </div>
+            </div>
+
+            <!-- Map Preview -->
+            <div class="map-preview">
+                <div class="map-background"></div>
+                <div class="incident-pin">
+                    <div class="pin-content">
+                        <div class="pin-icon">⚠️</div>
+                    </div>
+                </div>
+                <div class="map-overlay-text">Hace 1 minuto</div>
+            </div>
+
+            <!-- Details -->
+            <div class="content-section">
+                <div class="details-card">
+                    <div class="detail-row">
+                        <span class="detail-label">Reportado por</span>
+                        <span class="detail-value">Operador ATU</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Hora de inicio</span>
+                        <span class="detail-value">Hoy, 06:05 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Duración estimada</span>
+                        <span class="detail-value">2-3 horas</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Estado</span>
+                        <span class="detail-value">Activo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="content-section">
+                <div class="section-title">📝 Descripción</div>
+                <div class="incident-description">
+                    Protesta de varias cuadras. Se han bloqueado calles y están tirando gases lacrimógenos. Evitar la zona por completo. La policía está presente pero la situación continúa tensa.
+                </div>
+            </div>
+
+            <!-- Alternatives -->
+            <div class="content-section">
+                <div class="alternatives-section">
+                    <div class="alternatives-title">
+                        🗺️ Rutas alternativas recomendadas
+                    </div>
+                    <div class="route-suggestion" onclick="selectRoute(1)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Av. Tacna</div>
+                            <div class="route-details">Sin incidentes • Ruta más segura</div>
+                        </div>
+                        <div class="route-time">+8 min</div>
+                    </div>
+                    <div class="route-suggestion" onclick="selectRoute(2)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Jr. Ancash</div>
+                            <div class="route-details">Tráfico leve • Ruta conocida</div>
+                        </div>
+                        <div class="route-time">+12 min</div>
+                    </div>
+                    <div class="route-suggestion" onclick="selectRoute(3)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Av. Abancay</div>
+                            <div class="route-details">Mayor distancia pero libre</div>
+                        </div>
+                        <div class="route-time">+15 min</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Activity -->
+            <div class="content-section">
+                <div class="section-title">
+                    👥 Actividad de la comunidad
+                </div>
+                
+                <div class="community-comment">
+                    <div class="comment-avatar">LL</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-author">Lucía López</span>
+                            <span class="verified-badge">✓</span>
+                        </div>
+                        <div class="comment-text">Gracias por avisar. Recomiendo tomar el bus B que va por otra ruta. Es más seguro.</div>
+                        <div class="comment-time">hace 5 min</div>
+                    </div>
+                </div>
+
+                <div class="community-comment">
+                    <div class="comment-avatar">MS</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-author">Mario Salazar</span>
+                        </div>
+                        <div class="comment-text">Mejor no mandaré a mis hijos a sus clases hoy. Gracias por la información.</div>
+                        <div class="comment-time">hace 3 min</div>
+                    </div>
+                </div>
+
+                <div class="community-comment">
+                    <div class="comment-avatar">AP</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="comment-author">Ana Pérez</span>
+                            <span class="verified-badge">✓</span>
+                        </div>
+                        <div class="comment-text">Confirmo, paso por ahí ahora. Hay mucha policía. Mejor usar la Av. Tacna.</div>
+                        <div class="comment-time">hace 1 min</div>
+                    </div>
+                </div>
+
+                <!-- Comment Input -->
+                <div class="comment-input-section">
+                    <div class="comment-input-container">
+                        <input type="text" class="comment-input" placeholder="Escribe un comentario..." id="commentInput">
+                        <button class="comment-send-btn" onclick="addComment()" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn btn-secondary" onclick="shareIncident()">Compartir</button>
+            <button class="action-btn btn-primary" onclick="goToMap()">Ver en mapa</button>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            ¡Comentario agregado exitosamente!
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupCommentInput();
+            
+            // Remove notification entry after 3 seconds
+            setTimeout(() => {
+                const notification = document.querySelector('.notification-entry');
+                if (notification) {
+                    notification.style.animation = 'slideInFromTop 0.3s ease-out reverse';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 300);
+                }
+            }, 3000);
+        });
+
+        function setupCommentInput() {
+            const commentInput = document.getElementById('commentInput');
+            const sendBtn = document.querySelector('.comment-send-btn');
+            
+            if (commentInput && sendBtn) {
+                commentInput.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        sendBtn.disabled = false;
+                        sendBtn.style.opacity = '1';
+                    } else {
+                        sendBtn.disabled = true;
+                        sendBtn.style.opacity = '0.3';
+                    }
+                });
+            }
+        }
+
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const commentText = input.value.trim();
+            
+            if (!commentText) return;
+            
+            // Add new comment
+            const commentsContainer = document.querySelector('.content-section:last-of-type');
+            const inputSection = document.querySelector('.comment-input-section');
+            
+            const newComment = document.createElement('div');
+            newComment.className = 'community-comment';
+            newComment.innerHTML = `
+                <div class="comment-avatar">TU</div>
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <span class="comment-author">Tú</span>
+                        <span class="verified-badge">✓</span>
+                    </div>
+                    <div class="comment-text">${commentText}</div>
+                    <div class="comment-time">ahora</div>
+                </div>
+            `;
+            
+            commentsContainer.insertBefore(newComment, inputSection);
+            
+            // Clear input
+            input.value = '';
+            document.querySelector('.comment-send-btn').disabled = true;
+            document.querySelector('.comment-send-btn').style.opacity = '0.3';
+            
+            showSuccessMessage('Comentario agregado exitosamente');
+        }
+
+        function selectRoute(routeId) {
+            showSuccessMessage('Ruta alternativa seleccionada');
+            setTimeout(() => {
+                goToMap();
+            }, 1500);
+        }
+
+        function shareIncident() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mi Ruta Segura - Alerta de Protesta',
+                    text: '🚨 Alerta de seguridad: Protesta reportada en Jr. Lampa 111. Evitar la zona. Consulta Mi Ruta Segura para alternativas.',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const text = '🚨 Alerta de seguridad: Protesta reportada en Jr. Lampa 111. Evitar la zona. Consulta Mi Ruta Segura para alternativas.';
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                    showSuccessMessage('Enlace copiado al portapapeles');
+                } else {
+                    showSuccessMessage('Comparte: ' + text);
+                }
+            }
+        }
+
+        function goToMap() {
+            // This would navigate to the map view with the selected route
+            showSuccessMessage('Redirigiendo al mapa...');
+            setTimeout(() => {
+                window.location.href = './flujo_reportar_android.html';
+            }, 1500);
+        }
+
+        function goBack() {
+            // This would typically go back to the main app or close the incident view
+            window.history.back();
+        }
+
+        function showSuccessMessage(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 2500);
+        }
+
+        // Simulate arriving from a push notification
+        function simulateNotificationEntry() {
+            // This function would be called when the app opens from a notification
+            // The notification entry banner shows briefly to indicate the source
+            console.log('App opened from push notification: Protesta de impacto medio');
+        }
+
+        // Call this when the page loads to simulate notification entry
+        simulateNotificationEntry();

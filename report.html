@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Ruta Segura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        .phone-container {
+            max-width: 375px;
+            margin: 0 auto;
+            height: 100vh;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 32px rgba(0,0,0,0.12);
+        }
+
+        /* Status bar - Android style */
+        .status-bar {
+            height: 28px;
+            background: #1976D2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Material Design App Bar */
+        .app-bar {
+            height: 64px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            z-index: 1000;
+            position: relative;
+        }
+
+        .location-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .location-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FF6F00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #212121;
+            line-height: 1.2;
+        }
+
+        .location-subtitle {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 2px;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 3px;
+            padding: 4px;
+        }
+
+        .menu-icon span {
+            width: 18px;
+            height: 2px;
+            background: #424242;
+            border-radius: 1px;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: calc(100vh - 92px - 120px);
+            background: #f5f5f5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 48%, #e0e0e0 48%, #e0e0e0 50%, transparent 50%),
+                linear-gradient(0deg, transparent 48%, #e0e0e0 48%, #e0e0e0 50%, transparent 50%),
+                radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 80% 20%, rgba(33, 150, 243, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 40% 70%, rgba(255, 193, 7, 0.1) 0%, transparent 30%);
+            background-size: 60px 60px, 60px 60px, 100% 100%, 100% 100%, 100% 100%;
+        }
+
+        .route-line {
+            position: absolute;
+            top: 20%;
+            left: 15%;
+            width: 70%;
+            height: 60%;
+            pointer-events: none;
+        }
+
+        .route-path {
+            stroke: #1976D2;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 8,4;
+            animation: routeFlow 3s linear infinite;
+        }
+
+        @keyframes routeFlow {
+            to {
+                stroke-dashoffset: -24;
+            }
+        }
+
+        /* Material Design map pins */
+        .map-pin {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center bottom;
+        }
+
+        .map-pin:hover {
+            transform: scale(1.1);
+        }
+
+        .pin-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.23);
+            position: relative;
+        }
+
+        .pin-content::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .pin-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            font-size: 18px;
+            z-index: 1;
+        }
+
+        .pin-home .pin-content {
+            background: #4CAF50;
+        }
+
+        .pin-school .pin-content {
+            background: #1976D2;
+        }
+
+        .pin-warning .pin-content {
+            background: #FF9800;
+        }
+
+        .pin-home {
+            top: 25%;
+            left: 20%;
+        }
+
+        .pin-school {
+            top: 60%;
+            right: 20%;
+        }
+
+        .pin-warning {
+            top: 45%;
+            left: 50%;
+        }
+
+        .pin-time-badge {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            color: #757575;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        .time-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            font-size: 14px;
+            color: #424242;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .time-icon {
+            width: 16px;
+            height: 16px;
+            background: #4CAF50;
+            border-radius: 50%;
+            font-size: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Material FAB */
+        .fab {
+            position: fixed;
+            bottom: 140px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            background: #FF6F00;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.14), 0 1px 18px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 14px rgba(0,0,0,0.18), 0 2px 20px rgba(0,0,0,0.15);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        .fab svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Material Bottom Sheet */
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.12);
+            transform: translateY(calc(100% - 88px));
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            max-width: 375px;
+            margin: 0 auto;
+            max-height: 70vh;
+        }
+
+        .bottom-sheet.expanded {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 32px;
+            height: 4px;
+            background: #BDBDBD;
+            border-radius: 2px;
+            margin: 12px auto;
+            cursor: pointer;
+        }
+
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 16px 16px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .incident-avatar {
+            width: 48px;
+            height: 48px;
+            background: #F44336;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .incident-header-info {
+            flex: 1;
+        }
+
+        .incident-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 4px;
+        }
+
+        .incident-severity {
+            font-size: 12px;
+            color: #757575;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .sheet-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: #F5F5F5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #E0E0E0;
+        }
+
+        .action-btn.share {
+            background: #E8F5E8;
+            color: #4CAF50;
+        }
+
+        .sheet-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .details-card {
+            background: #F8F9FA;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: #757575;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .detail-value {
+            color: #212121;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .incident-description {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 16px;
+            color: #424242;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .alternatives-section {
+            background: #E3F2FD;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .alternatives-title {
+            color: #1976D2;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .route-suggestion {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .route-suggestion:hover {
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        .route-suggestion:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-info {
+            flex: 1;
+        }
+
+        .route-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 2px;
+        }
+
+        .route-details {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .route-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1976D2;
+        }
+
+        .community-section {
+            margin-top: 8px;
+        }
+
+        .section-title {
+            color: #212121;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .community-comment {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: #E0E0E0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #757575;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .comment-body {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-author {
+            font-size: 14px;
+            color: #1976D2;
+            font-weight: 500;
+        }
+
+        .verified-badge {
+            font-size: 12px;
+            color: #4CAF50;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #424242;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .comment-input-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .comment-input-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #F8F9FA;
+            border-radius: 24px;
+            padding: 8px 16px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #424242;
+            outline: none;
+            padding: 8px 0;
+        }
+
+        .comment-input::placeholder {
+            color: #9E9E9E;
+        }
+
+        .comment-send-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #1976D2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.3;
+        }
+
+        .comment-send-btn:not(:disabled) {
+            opacity: 1;
+        }
+
+        .comment-send-btn:not(:disabled):hover {
+            background: #1565C0;
+            transform: scale(1.05);
+        }
+
+        /* Notification styles */
+        .notification-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #FF5722;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1001;
+            transform: translateY(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notification-banner.show {
+            transform: translateY(0);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .notification-action {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        /* Material dialog */
+        .dialog {
+            background: white;
+            border-radius: 12px;
+            margin: 24px;
+            width: calc(100% - 48px);
+            max-width: 320px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 11px 15px rgba(0,0,0,0.2);
+        }
+
+        .dialog-header {
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .dialog-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .dialog-subtitle {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .dialog-content {
+            padding: 16px 24px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .report-option {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 16px 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .report-option:hover {
+            background: #F5F5F5;
+            border-color: #1976D2;
+        }
+
+        .report-option.selected {
+            background: #E3F2FD;
+            border-color: #1976D2;
+            color: #1976D2;
+        }
+
+        .report-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .report-option.selected .report-icon {
+            background: #1976D2;
+            color: white;
+        }
+
+        .report-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .dialog-actions {
+            padding: 8px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-text {
+            background: transparent;
+            color: #1976D2;
+        }
+
+        .btn-text:hover {
+            background: rgba(25, 118, 210, 0.04);
+        }
+
+        .btn-contained {
+            background: #1976D2;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+        }
+
+        .btn-contained:hover {
+            background: #1565C0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.16);
+        }
+
+        .btn-contained:disabled {
+            background: #E0E0E0;
+            color: #9E9E9E;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #212121;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-height: 80px;
+            resize: vertical;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+        }
+
+        /* Impact slider */
+        .impact-slider {
+            margin: 16px 0;
+        }
+
+        .slider-container {
+            position: relative;
+            margin: 12px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(to right, #4CAF50 0%, #FF9800 50%, #F44336 100%);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #1976D2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #1976D2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .impact-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #757575;
+            margin-top: 8px;
+        }
+
+        .impact-display {
+            text-align: center;
+            padding: 8px 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 12px;
+            margin: 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .impact-leve {
+            background: #E8F5E8;
+            color: #4CAF50;
+        }
+
+        .impact-medio {
+            background: #FFF3E0;
+            color: #FF9800;
+        }
+
+        .impact-grave {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        /* Share menu */
+        .share-menu {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            min-width: 180px;
+            transform: translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .share-menu.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .share-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            color: #424242;
+        }
+
+        .share-option:hover {
+            background: #F5F5F5;
+        }
+
+        .share-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>●</span>
+                <span>●●●</span>
+                <span>WiFi</span>
+            </div>
+            <div class="status-right">
+                <span>9:30</span>
+                <span>●●●●</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <div class="location-section">
+                <div class="location-icon">📍</div>
+                <div class="location-info">
+                    <div class="location-title">Centro de Lima</div>
+                    <div class="location-subtitle">Ruta a Colegio San Martín</div>
+                </div>
+            </div>
+            <div class="menu-icon" onclick="showMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Notification Banner -->
+        <div class="notification-banner" id="notificationBanner">
+            <div class="notification-icon">⚠️</div>
+            <div class="notification-text">Protesta de impacto medio reportada</div>
+            <button class="notification-action" onclick="showNotificationDetails()">Ver</button>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-container">
+            <div class="map-background"></div>
+            
+            <!-- Route -->
+            <div class="route-line">
+                <svg width="100%" height="100%" viewBox="0 0 300 200">
+                    <path class="route-path" d="M50,160 Q100,80 150,100 T250,40" />
+                </svg>
+            </div>
+
+            <!-- Map Pins -->
+            <div class="map-pin pin-home">
+                <div class="pin-content">
+                    <div class="pin-icon">🏠</div>
+                </div>
+            </div>
+            
+            <div class="map-pin pin-warning" onclick="showIncidentDetails()">
+                <div class="pin-content">
+                    <div class="pin-icon">⚠️</div>
+                </div>
+            </div>
+            
+            <div class="map-pin pin-school">
+                <div class="pin-content">
+                    <div class="pin-icon">🏫</div>
+                </div>
+            </div>
+
+            <!-- Time Badge -->
+            <div class="time-badge">
+                <div class="time-icon">●</div>
+                <span>Hace 1 min</span>
+            </div>
+        </div>
+
+        <!-- FAB -->
+        <button class="fab" onclick="openReportDialog()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+        </button>
+
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet" id="bottomSheet">
+            <div class="sheet-handle" onclick="toggleSheet()"></div>
+            
+            <div class="sheet-header">
+                <div class="incident-avatar">⚠️</div>
+                <div class="incident-header-info">
+                    <div class="incident-title">Protesta</div>
+                    <div class="incident-severity">Impacto: Medio</div>
+                </div>
+                <div class="sheet-actions">
+                    <div style="position: relative;">
+                        <button class="action-btn share" onclick="toggleShareMenu()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z"/>
+                            </svg>
+                        </button>
+                        <div class="share-menu" id="shareMenu">
+                            <div class="share-option" onclick="shareWhatsApp()">
+                                <div class="share-icon" style="color: #25D366;">📱</div>
+                                WhatsApp
+                            </div>
+                            <div class="share-option" onclick="shareFacebook()">
+                                <div class="share-icon" style="color: #1877F2;">📘</div>
+                                Facebook
+                            </div>
+                            <div class="share-option" onclick="copyLink()">
+                                <div class="share-icon" style="color: #757575;">🔗</div>
+                                Copiar enlace
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sheet-content">
+                <div class="details-card">
+                    <div class="detail-row">
+                        <span class="detail-label">Horario</span>
+                        <span class="detail-value">Hoy, 06:05 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Reportado por</span>
+                        <span class="detail-value">Operador ATU</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ubicación</span>
+                        <span class="detail-value">Jr. Lampa 111</span>
+                    </div>
+                </div>
+
+                <div class="incident-description">
+                    Protesta de varias cuadras. Se han bloqueado calles y están tirando gases lacrimógenos. Evitar la zona.
+                </div>
+
+                <div class="alternatives-section">
+                    <div class="alternatives-title">
+                        🗺️ Rutas alternativas recomendadas
+                    </div>
+                    <div class="route-suggestion" onclick="selectAlternativeRoute(1)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Av. Tacna</div>
+                            <div class="route-details">Sin incidentes • Ruta más segura</div>
+                        </div>
+                        <div class="route-time">+8 min</div>
+                    </div>
+                    <div class="route-suggestion" onclick="selectAlternativeRoute(2)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Jr. Ancash</div>
+                            <div class="route-details">Tráfico leve • Ruta conocida</div>
+                        </div>
+                        <div class="route-time">+12 min</div>
+                    </div>
+                    <div class="route-suggestion" onclick="selectAlternativeRoute(3)">
+                        <div class="route-info">
+                            <div class="route-name">Vía Av. Abancay</div>
+                            <div class="route-details">Mayor distancia pero libre</div>
+                        </div>
+                        <div class="route-time">+15 min</div>
+                    </div>
+                </div>
+
+                <div class="community-section">
+                    <div class="section-title">
+                        👥 Actividad de la comunidad
+                    </div>
+                    
+                    <div class="community-comment">
+                        <div class="comment-avatar">LL</div>
+                        <div class="comment-body">
+                            <div class="comment-header">
+                                <span class="comment-author">Lucía López</span>
+                                <span class="verified-badge">✓</span>
+                            </div>
+                            <div class="comment-text">Gracias por avisar. Recomiendo tomar el bus B que va por otra ruta. Es más seguro.</div>
+                            <div class="comment-time">hace 5 min</div>
+                        </div>
+                    </div>
+
+                    <div class="community-comment">
+                        <div class="comment-avatar">MS</div>
+                        <div class="comment-body">
+                            <div class="comment-header">
+                                <span class="comment-author">Mario Salazar</span>
+                            </div>
+                            <div class="comment-text">Mejor no mandaré a mis hijos a sus clases hoy.</div>
+                            <div class="comment-time">hace 3 min</div>
+                        </div>
+                    </div>
+
+                    <!-- Comment input -->
+                    <div class="comment-input-section">
+                        <div class="comment-input-container">
+                            <input type="text" class="comment-input" placeholder="Escribe un comentario..." id="commentInput">
+                            <button class="comment-send-btn" onclick="addComment()" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Overlay -->
+        <div class="modal-overlay" id="modalOverlay">
+            <!-- Report Type Selection Dialog -->
+            <div class="dialog" id="reportDialog">
+                <div class="dialog-header">
+                    <div class="dialog-title">Reportar incidente</div>
+                    <div class="dialog-subtitle">Selecciona el tipo de incidente</div>
+                </div>
+
+                <div class="dialog-content">
+                    <div class="report-grid">
+                        <div class="report-option" onclick="selectReport('traffic', '🚗', 'Tráfico pesado')">
+                            <div class="report-icon">🚗</div>
+                            <span class="report-label">Tráfico pesado</span>
+                        </div>
+                        
+                        <div class="report-option" onclick="selectReport('roadblock', '🚧', 'Bloqueo de vía')">
+                            <div class="report-icon">🚧</div>
+                            <span class="report-label">Bloqueo de vía</span>
+                        </div>
+                        
+                        <div class="report-option" onclick="selectReport('protest', '⚠️', 'Protestas')">
+                            <div class="report-icon">⚠️</div>
+                            <span class="report-label">Protestas</span>
+                        </div>
+                        
+                        <div class="report-option" onclick="selectReport('accident', '🚨', 'Accidente')">
+                            <div class="report-icon">🚨</div>
+                            <span class="report-label">Accidente</span>
+                        </div>
+                        
+                        <div class="report-option" onclick="selectReport('construction', '🔧', 'Obras')">
+                            <div class="report-icon">🔧</div>
+                            <span class="report-label">Obras</span>
+                        </div>
+                        
+                        <div class="report-option" onclick="selectReport('police', '👮', 'Control policial')">
+                            <div class="report-icon">👮</div>
+                            <span class="report-label">Control policial</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dialog-actions">
+                    <button class="btn btn-text" onclick="closeReportDialog()">Cancelar</button>
+                    <button class="btn btn-contained" id="reportSubmitBtn" disabled onclick="showReportForm()">Continuar</button>
+                </div>
+            </div>
+
+            <!-- Report Form Dialog -->
+            <div class="dialog" id="reportFormDialog" style="display: none;">
+                <div class="dialog-header">
+                    <div class="dialog-title" id="formTitle">Reportar incidente</div>
+                    <div class="dialog-subtitle">Completa los detalles del reporte</div>
+                </div>
+
+                <div class="dialog-content" style="max-height: 60vh; overflow-y: auto;">
+                    <form id="incidentForm">
+                        <div class="form-group">
+                            <label class="form-label">Fecha y hora</label>
+                            <input type="datetime-local" class="form-input" id="incidentDateTime" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ubicación</label>
+                            <input type="text" class="form-input" id="incidentLocation" placeholder="Mi ubicación actual" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Nivel de impacto</label>
+                            <div class="impact-slider">
+                                <div class="slider-container">
+                                    <input type="range" min="1" max="3" value="2" class="slider" id="impactSlider">
+                                </div>
+                                <div class="impact-labels">
+                                    <span>Leve</span>
+                                    <span>Medio</span>
+                                    <span>Grave</span>
+                                </div>
+                                <div class="impact-display" id="impactDisplay">MEDIO</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Detalles</label>
+                            <textarea class="form-textarea" id="incidentDetails" placeholder="Describe lo que está pasando en el lugar..." required></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="dialog-actions">
+                    <button class="btn btn-text" onclick="backToTypeSelection()">Atrás</button>
+                    <button class="btn btn-contained" onclick="showConfirmation()">Publicar reporte</button>
+                </div>
+            </div>
+
+            <!-- Confirmation Dialog -->
+            <div class="dialog" id="confirmationDialog" style="display: none; max-width: 280px;">
+                <div class="dialog-header" style="text-align: center; padding-bottom: 16px;">
+                    <div style="width: 64px; height: 64px; background: #FF6F00; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px;" id="confirmationIcon">⚠️</div>
+                    <div class="dialog-title">¿Confirmar reporte?</div>
+                    <div class="dialog-subtitle">Tu reporte será visible para todos los usuarios y ayudará a la comunidad.</div>
+                </div>
+
+                <div class="dialog-actions">
+                    <button class="btn btn-text" onclick="backToForm()">Revisar</button>
+                    <button class="btn btn-contained" onclick="submitReport()">Sí, publicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedReport = null;
+        let selectedReportIcon = null;
+        let selectedReportName = null;
+        let sheetExpanded = false;
+        let reportData = {};
+
+        function toggleSheet() {
+            const sheet = document.getElementById('bottomSheet');
+            sheetExpanded = !sheetExpanded;
+            
+            if (sheetExpanded) {
+                sheet.classList.add('expanded');
+            } else {
+                sheet.classList.remove('expanded');
+            }
+        }
+
+        function showIncidentDetails() {
+            const sheet = document.getElementById('bottomSheet');
+            sheet.classList.add('expanded');
+            sheetExpanded = true;
+        }
+
+        function showNotificationDetails() {
+            const banner = document.getElementById('notificationBanner');
+            banner.classList.remove('show');
+            showIncidentDetails();
+        }
+
+        function openReportDialog() {
+            document.getElementById('modalOverlay').classList.add('show');
+            showDialog('reportDialog');
+        }
+
+        function closeReportDialog() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            resetReportSelection();
+        }
+
+        function showDialog(dialogId) {
+            document.querySelectorAll('.dialog').forEach(dialog => {
+                dialog.style.display = 'none';
+            });
+            document.getElementById(dialogId).style.display = 'block';
+        }
+
+        function resetReportSelection() {
+            selectedReport = null;
+            selectedReportIcon = null;
+            selectedReportName = null;
+            reportData = {};
+            
+            document.querySelectorAll('.report-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.getElementById('reportSubmitBtn').disabled = true;
+            
+            const form = document.getElementById('incidentForm');
+            if (form) form.reset();
+            updateImpactDisplay();
+        }
+
+        function selectReport(type, icon, name) {
+            document.querySelectorAll('.report-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            event.target.closest('.report-option').classList.add('selected');
+            selectedReport = type;
+            selectedReportIcon = icon;
+            selectedReportName = name;
+            
+            document.getElementById('reportSubmitBtn').disabled = false;
+        }
+
+        function showReportForm() {
+            if (!selectedReport) return;
+            
+            document.getElementById('formTitle').textContent = selectedReportName;
+            
+            const now = new Date();
+            const isoString = now.toISOString().slice(0, 16);
+            document.getElementById('incidentDateTime').value = isoString;
+            
+            document.getElementById('incidentLocation').value = 'Mi ubicación actual';
+            
+            showDialog('reportFormDialog');
+        }
+
+        function backToTypeSelection() {
+            showDialog('reportDialog');
+        }
+
+        function backToForm() {
+            showDialog('reportFormDialog');
+        }
+
+        function showConfirmation() {
+            const form = document.getElementById('incidentForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            reportData = {
+                type: selectedReport,
+                icon: selectedReportIcon,
+                name: selectedReportName,
+                dateTime: document.getElementById('incidentDateTime').value,
+                location: document.getElementById('incidentLocation').value,
+                impact: getImpactLevel(),
+                impactValue: getImpactValue(),
+                details: document.getElementById('incidentDetails').value
+            };
+            
+            document.getElementById('confirmationIcon').textContent = selectedReportIcon;
+            
+            showDialog('confirmationDialog');
+        }
+
+        function submitReport() {
+            if (!reportData.type) return;
+            
+            addNewIncidentPin(reportData);
+            showSuccessFeedback();
+            closeReportDialog();
+        }
+
+        function addNewIncidentPin(incident) {
+            const mapContainer = document.querySelector('.map-container');
+            
+            const newPin = document.createElement('div');
+            newPin.className = 'map-pin';
+            
+            const randomTop = Math.random() * 30 + 35;
+            const randomLeft = Math.random() * 40 + 30;
+            
+            newPin.style.top = randomTop + '%';
+            newPin.style.left = randomLeft + '%';
+            
+            const impactColors = {
+                1: '#4CAF50',
+                2: '#FF9800', 
+                3: '#F44336'
+            };
+            
+            const pinColor = impactColors[incident.impactValue];
+            
+            newPin.innerHTML = `
+                <div class="pin-content" style="background: ${pinColor};">
+                    <div class="pin-icon">${incident.icon}</div>
+                </div>
+                <div class="pin-time-badge">hace unos segundos</div>
+            `;
+            
+            newPin.onclick = () => showNewIncidentDetails(incident);
+            newPin.style.animation = 'pulse 1s ease-in-out 3';
+            
+            mapContainer.appendChild(newPin);
+        }
+
+        function showNewIncidentDetails(incident) {
+            document.querySelector('.incident-avatar').textContent = incident.icon;
+            document.querySelector('.incident-title').textContent = incident.name;
+            document.querySelector('.incident-severity').textContent = `Impacto: ${incident.impact}`;
+            
+            const detailValues = document.querySelectorAll('.detail-value');
+            detailValues[0].textContent = 'Hace unos segundos';
+            detailValues[1].textContent = 'Usuario verificado';
+            detailValues[2].textContent = incident.location;
+            
+            document.querySelector('.incident-description').textContent = incident.details;
+            
+            const alternativesSection = document.querySelector('.alternatives-section');
+            if (alternativesSection) {
+                alternativesSection.style.display = 'none';
+            }
+            
+            const communitySection = document.querySelector('.community-section');
+            communitySection.innerHTML = `
+                <div class="section-title">👥 Actividad de la comunidad</div>
+                <div style="color: #757575; font-size: 14px; padding: 20px 0; text-align: center;">
+                    Sé el primero en comentar sobre este reporte
+                </div>
+                <div class="comment-input-section">
+                    <div class="comment-input-container">
+                        <input type="text" class="comment-input" placeholder="Escribe un comentario..." id="commentInput">
+                        <button class="comment-send-btn" onclick="addComment()" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            showIncidentDetails();
+            setupCommentInput();
+        }
+
+        function getImpactValue() {
+            return parseInt(document.getElementById('impactSlider').value);
+        }
+
+        function getImpactLevel() {
+            const value = getImpactValue();
+            const levels = { 1: 'leve', 2: 'medio', 3: 'grave' };
+            return levels[value];
+        }
+
+        function updateImpactDisplay() {
+            const slider = document.getElementById('impactSlider');
+            const display = document.getElementById('impactDisplay');
+            
+            if (!slider || !display) return;
+            
+            const value = parseInt(slider.value);
+            const levels = {
+                1: { text: 'LEVE', class: 'impact-leve' },
+                2: { text: 'MEDIO', class: 'impact-medio' },
+                3: { text: 'GRAVE', class: 'impact-grave' }
+            };
+            
+            const level = levels[value];
+            display.textContent = level.text;
+            display.className = 'impact-display ' + level.class;
+        }
+
+        function setupCommentInput() {
+            const commentInput = document.getElementById('commentInput');
+            const sendBtn = document.querySelector('.comment-send-btn');
+            
+            if (commentInput && sendBtn) {
+                commentInput.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        sendBtn.disabled = false;
+                        sendBtn.style.opacity = '1';
+                    } else {
+                        sendBtn.disabled = true;
+                        sendBtn.style.opacity = '0.3';
+                    }
+                });
+            }
+        }
+
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const commentText = input.value.trim();
+            
+            if (!commentText) return;
+            
+            const communitySection = document.querySelector('.community-section');
+            const emptyMessage = communitySection.querySelector('div[style*="text-align: center"]');
+            
+            if (emptyMessage) {
+                emptyMessage.remove();
+            }
+            
+            const newComment = document.createElement('div');
+            newComment.className = 'community-comment';
+            newComment.innerHTML = `
+                <div class="comment-avatar">TU</div>
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <span class="comment-author">Tú</span>
+                        <span class="verified-badge">✓</span>
+                    </div>
+                    <div class="comment-text">${commentText}</div>
+                    <div class="comment-time">ahora</div>
+                </div>
+            `;
+            
+            const inputSection = document.querySelector('.comment-input-section');
+            communitySection.insertBefore(newComment, inputSection);
+            
+            input.value = '';
+            document.querySelector('.comment-send-btn').disabled = true;
+            document.querySelector('.comment-send-btn').style.opacity = '0.3';
+            
+            showSuccessFeedback('Comentario agregado');
+        }
+
+        function selectAlternativeRoute(routeId) {
+            showSuccessFeedback('Ruta alternativa seleccionada');
+            // Here you would navigate to the selected route
+        }
+
+        function toggleShareMenu() {
+            const shareMenu = document.getElementById('shareMenu');
+            shareMenu.classList.toggle('show');
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeShareMenu(e) {
+                    if (!e.target.closest('.sheet-actions')) {
+                        shareMenu.classList.remove('show');
+                        document.removeEventListener('click', closeShareMenu);
+                    }
+                });
+            }, 100);
+        }
+
+        function shareWhatsApp() {
+            const text = encodeURIComponent('🚨 Alerta de seguridad: Protesta reportada en Jr. Lampa 111. Evitar la zona. Consulta Mi Ruta Segura para alternativas.');
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+            document.getElementById('shareMenu').classList.remove('show');
+        }
+
+        function shareFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+            document.getElementById('shareMenu').classList.remove('show');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showSuccessFeedback('Enlace copiado');
+            });
+            document.getElementById('shareMenu').classList.remove('show');
+        }
+
+        function showSuccessFeedback(message = '¡Reporte enviado exitosamente!') {
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #4CAF50;
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                z-index: 3000;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                font-size: 14px;
+            `;
+            successMsg.textContent = message;
+            
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                successMsg.remove();
+            }, 2500);
+        }
+
+        function showMenu() {
+            alert('Menú próximamente disponible');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('impactSlider');
+            if (slider) {
+                slider.addEventListener('input', updateImpactDisplay);
+                updateImpactDisplay();
+            }
+            
+            setupCommentInput();
+        });
+
+        // Show notification banner after 1 second
+        setTimeout(() => {
+            document.getElementById('notificationBanner').classList.add('show');
+        }, 1000);
+
+        // Auto-expand bottom sheet after 3 seconds
+        setTimeout(() => {
+            showIncidentDetails();
+        }, 3000);
+
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.15); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+            
