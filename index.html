@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Ruta Segura - Tranquilidad en el camino al colegio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap');
 
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Baloo 2', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 20px;
             line-height: 1.5;
             color: #2c3e50;
             overflow-x: hidden;
@@ -37,8 +38,8 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, #f39c12, #e74c3c);
             border-radius: 50%;
             display: flex;
@@ -77,7 +78,7 @@
             text-decoration: none;
             color: #2c3e50;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 1rem;
             transition: color 0.3s ease;
         }
 
@@ -86,14 +87,27 @@
         }
 
         /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
+      /* Estilo base (desktop / tablet) */
+.hero {
+  min-height: 100vh;
+  background: 
+    url("img/background.png") no-repeat bottom right / contain,
+    linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Estilo para móviles */
+@media (max-width: 768px) {
+  .hero {
+    background: 
+      url("img/background.png") no-repeat bottom right / 200%, /* crece y se corta */
+      linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+}
+
 
         .hero::before {
             content: '';
@@ -114,10 +128,10 @@
         }
 
         .hero h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
+            font-size: 4rem;
+            font-weight: 900;
             margin-bottom: 1.5rem;
-            line-height: 1.15;
+            line-height: 1;
         }
 
         .hero p {
@@ -126,6 +140,13 @@
             margin-bottom: 2.5rem;
             opacity: 0.95;
             line-height: 1.6;
+        }
+
+        .dos-columnas{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 1rem;
         }
 
         .cta-button {
@@ -161,7 +182,7 @@
 
         /* Features Section */
         .features {
-            padding: 6rem 0;
+            padding: 10rem 0;
             background: linear-gradient(to bottom, #f8f9fa, white);
         }
 
@@ -235,7 +256,7 @@
 
         /* How it works */
         .how-it-works {
-            padding: 6rem 0;
+            padding: 10rem 0;
             background: white;
         }
 
@@ -281,7 +302,7 @@
 
         /* FAQ Section */
         .faq {
-            padding: 6rem 0;
+            padding: 10rem 0;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         }
 
@@ -315,7 +336,7 @@
         /* Testimonial */
         .testimonial {
             background: linear-gradient(135deg, #2c5aa0, #1e3c72);
-            padding: 4rem 0;
+            padding: 6rem 0;
             text-align: center;
             color: white;
         }
@@ -391,6 +412,23 @@
             cursor: not-allowed;
         }
 
+        .logo-footer{
+            margin: 1rem 0;
+        }
+
+
+        .under-footer {
+        text-align: center;
+        padding: 1rem 0;
+        font-size: 0.9rem;
+        color: #ebeced;
+        }
+
+        .under-footer p {
+        margin: 2rem 0 0;
+        font-weight: 500;
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .nav-links {
@@ -398,7 +436,7 @@
             }
             
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 3.5rem;
             }
             
             .hero p {
@@ -459,8 +497,7 @@
     <nav>
         <div class="container">
             <div class="logo">
-                <div class="logo-icon">🛡️</div>
-                Mi Ruta Segura
+                <img src="img/logotipo.svg" width="160px" alt="">
             </div>
             <ul class="nav-links">
                 <li><a href="#inicio">Inicio</a></li>
@@ -475,15 +512,47 @@
     <section class="hero" id="inicio">
         <div class="container">
             <div class="hero-content fade-in-up">
-                <h1>El camino al colegio de tu hijo: ¿aventura o pesadilla?</h1>
+      
+                    <h1>El camino al colegio de tu hijo: ¿aventura o pesadilla?</h1>    
                 <p>Imagínate despertar cada día sabiendo que tu comunidad entera protege a tu hijo. Comerciantes, vecinos, otros padres... todos conectados para que llegue seguro y feliz.</p>
+               <div class="dos-columnas">
+                <img src="img/imagotipo.svg" width="70"  alt="Mi Ruta Segura">
                 <a href="#descarga" class="cta-button">
-                    📱 Descargar Gratis
+                     <img src="img/android.svg" alt="" width="32px"> Descargar Gratis
                 </a>
+                
+               </div>
+                
             </div>
         </div>
-        <div class="hero-visual">
-            🏫
+    </section>
+
+
+        <!-- How it Works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">¿Cómo transformamos el miedo en tranquilidad?</h2>
+            <p class="section-subtitle animate-on-scroll">Hazlo posible con Mi Ruta Segura en 3 pasos simples</p>
+            
+            <div class="steps-grid">
+                <div class="step animate-on-scroll">
+                    <div class="step-number">1</div>
+                    <h3>Descarga y Regístrate</h3>
+                    <p>Descarga Mi Ruta Segura gratis, registra los datos de tu hijo y su colegio. En menos de 2 minutos estarás conectado con tu comunidad local.</p>
+                </div>
+                
+                <div class="step animate-on-scroll">
+                    <div class="step-number">2</div>
+                    <h3>Recibe Alertas Inteligentes</h3>
+                    <p>Cada mañana, antes de que tu hijo salga, recibirás información sobre incidentes, manifestaciones o situaciones de riesgo en su ruta habitual.</p>
+                </div>
+                
+                <div class="step animate-on-scroll">
+                    <div class="step-number">3</div>
+                    <h3>Actúa y Protege</h3>
+                    <p>Con información en tiempo real, podrás orientar a tu hijo sobre rutas alternativas, horarios seguros y precauciones específicas. ¡Nunca más irá a ciegas!</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -515,33 +584,7 @@
         </div>
     </section>
 
-    <!-- How it Works -->
-    <section class="how-it-works" id="como-funciona">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">¿Cómo transformamos el miedo en tranquilidad?</h2>
-            <p class="section-subtitle animate-on-scroll">En 3 pasos simples, toda tu comunidad trabaja junta</p>
-            
-            <div class="steps-grid">
-                <div class="step animate-on-scroll">
-                    <div class="step-number">1</div>
-                    <h3>Descarga y Regístrate</h3>
-                    <p>Descarga Mi Ruta Segura gratis, registra los datos de tu hijo y su colegio. En menos de 2 minutos estarás conectado con tu comunidad local.</p>
-                </div>
-                
-                <div class="step animate-on-scroll">
-                    <div class="step-number">2</div>
-                    <h3>Recibe Alertas Inteligentes</h3>
-                    <p>Cada mañana, antes de que tu hijo salga, recibirás información sobre incidentes, manifestaciones o situaciones de riesgo en su ruta habitual.</p>
-                </div>
-                
-                <div class="step animate-on-scroll">
-                    <div class="step-number">3</div>
-                    <h3>Actúa y Protege</h3>
-                    <p>Con información en tiempo real, podrás orientar a tu hijo sobre rutas alternativas, horarios seguros y precauciones específicas. ¡Nunca más irá a ciegas!</p>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Testimonial -->
     <section class="testimonial">
@@ -587,17 +630,35 @@
         <div class="container">
             <h2>Únete a la red de padres que protegen juntos</h2>
             <p>Porque el camino al colegio debe ser una aventura, no una preocupación</p>
+            <div class="logo-footer">
+<img src="img/logo.svg" alt="" width="250"> 
+            </div>
+             
+             
             
             <div class="download-buttons">
                 <a href="#" class="download-btn">
-                    📱 Descargar en Google Play
+                     <img src="img/android.svg" alt="" width="32px"> Descargar en Google Play
                 </a>
                 <a href="#" class="download-btn coming-soon">
-                    🍎 iOS Próximamente
+                    <img src="img/apple.svg" alt="" width="32px"> iOS Próximamente
                 </a>
             </div>
+
+
+            <!-- Under Footer -->
+            <footer class="under-footer">
+            <p>Hecho en Lima, Perú ❤️</p>
+            <!-- O si prefieres con bandera -->
+            <!-- <p>Hecho en Lima, Perú 🇵🇪</p> -->
+            </footer>
+            
         </div>
+
+        
     </section>
+
+
 
     <script>
         // Smooth scrolling
